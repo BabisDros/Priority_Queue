@@ -52,7 +52,7 @@ public class City implements CityInterface, Comparable {
     */    
     public float getInfectRatio()
     {
-        return getInfectRatio();   
+        return infectRatio;   
     }
 
     /**
@@ -115,19 +115,42 @@ public class City implements CityInterface, Comparable {
         }
     }
 
-//! ====================== Working here start======================
-    public boolean CompareTo(City b) {
+    /**
+     * @return (this < b) ? true : false
+     */
+//todo ------------------------- TEST -------------------------
+    public boolean CompareTo(City b) 
+    {
         if (this.getInfectRatio()!=b.getInfectRatio())
         {
             return this.getInfectRatio() < b.getInfectRatio();
         }
         else if (!this.getName().equals(b.getName()))
         {
-            return this.getName().compareTo(b.getName());
+            int temp = this.getName().compareTo(b.getName());
+            if (temp<0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return this.getID() < b.getID();
         }
     }
 
-//! ====================== Working here end======================
+    /**
+     * Finds the number of infections per 50k citizens and saves it to the object
+     */
+    public void calculateDensity()
+    {
+        infectRatio = 50000f * (float)getInfluenzaCases() / (float)getPopulation();
+        infectRatio = (float)((int)(infectRatio * 100f + 0.5))/100f; // round up
+    }
 
     /*
      * Will immediately stop the program if a parameter is not following the rules
@@ -143,14 +166,6 @@ public class City implements CityInterface, Comparable {
             System.out.println(e.getMessage());
             System.exit(0);
         }
-    }
-
-
-
-    public static void main (String[] args){
-        City myOb = new City();
-        myOb.setID(107);
-        System.out.println(myOb.getID());
     }
 
 }

@@ -3,9 +3,9 @@
 - Do not use java's data structures, we can use the one we made from previous project
 ```
 ## Part A
-- [ ] Make City Class
+- [x] Make City Class
 - [x] Make CityInterface
-- [ ] Make Comparable<City> Interface (compareTo)
+- [x] Make Comparable<City> Interface (compareTo)
 - [ ] Make Influenza_k.java 
 
 **public interface CityInterface** \
