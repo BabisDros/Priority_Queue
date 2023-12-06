@@ -4,7 +4,7 @@
 ```
 ## Part A
 - [ ] Make City Class
-- [ ] Make CityInterface
+- [x] Make CityInterface
 - [ ] Make Comparable<City> Interface (compareTo)
 - [ ] Make Influenza_k.java 
 
