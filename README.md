@@ -6,9 +6,9 @@
 - [x] Make City Class
 - [x] Make CityInterface
 - [x] Make Comparable<City> Interface (compareTo)
-- [ ] Make Influenza_k.java 
+- [x] Make Influenza_k.java 
 
-~~**public interface CityInterface** \
+**public interface CityInterface** \
   { \
   public int getID(); _check 0 < i <= 999 and unique_ \
   public String getName(); _max 50 characters_ \
@@ -18,19 +18,19 @@
   public void setName(String name); \
   public void setPopulation(int population); \
   public void setInfluenzaCases(int InfluenzaCases); \
-  }~~
-* ~~if (check is false) {Terminate Program}~~
+  }
+* if (check is false) {Terminate Program}
 
 * Υλοποιήστε ένα πρόγραμμα το οποίο θα διαβάζει από ένα αρχείο την ημερήσια αναφορά κρουσμάτων, θα ζητάει από τον χρήστη την παράμετρο k, και θα τυπώνει τις πόλεις με τους k μικρότερους αριθμούς κρουσμάτων ανά 50,000 κατοίκους. Το πρόγραμμα θα ονομάζεται Influenza_k.java
 
-~~**txt format** \
-17 [ID] Vienna [Name] 1975000 [Population] 2200 [Infection cases]~~
+**txt format** \
+17 [ID] Vienna [Name] 1975000 [Population] 2200 [Infection cases]
 
-* ~~if ( k < number of cities) {Terminate Program}~~
+* if ( k < number of cities) {Terminate Program}
 
 Sort using `Heapsort` or `Quicksort`
 
-~~Infections per 50k format: x.xx~~
+Infections per 50k format: x.xx
 
 **Sorting**: Least infections -> Alphabetically -> ID
 
