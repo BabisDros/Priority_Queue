@@ -11,7 +11,7 @@ public class Influenza_k
         Scanner input = new Scanner(System.in);
         int k;
         //* ---------------- Read data from file ---------------- *//
-        System.out.println("What is the name of the file with the data? (Do not included the extension .txt)");
+        System.out.println("What is the name of the file with the data? (Do not include the extension .txt)");
         String name = input.nextLine();
         readData(database, name);
         //* ---------------- User interaction ---------------- *//
@@ -82,7 +82,8 @@ public class Influenza_k
         }
         catch (IOException e) 
         {
-            System.out.println	("Error reading file...");
+            System.out.println	("Error reading file...\nThe program will now exit");
+            System.exit(0);
         }
     }
 
