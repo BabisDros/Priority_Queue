@@ -11,7 +11,9 @@ public class Influenza_k
         Scanner input = new Scanner(System.in);
         int k;
         //* ---------------- Read data from file ---------------- *//
-        readData(database);
+        System.out.println("What is the name of the file with the data? (Do not included the extension .txt)");
+        String name = input.nextLine();
+        readData(database, name);
         //* ---------------- User interaction ---------------- *//
         System.out.println("How many cities should be included in the ranking?");
         k = Integer.parseInt(input.nextLine());
@@ -38,7 +40,7 @@ public class Influenza_k
     }
 
 
-    public static void readData(StringDoubleEndedQueue<City> database) 
+    public static void readData(StringDoubleEndedQueue<City> database, String name) 
     {
         String line, data = "";
         BufferedReader reader;
@@ -47,7 +49,8 @@ public class Influenza_k
         StringDoubleEndedQueue<String> cityCharacteristics = new StringDoubleEndedQueueImpl<String>();
         try
         {
-            reader = new BufferedReader(new FileReader("data.txt"));
+            name = name + ".txt";
+            reader = new BufferedReader(new FileReader(name));
             System.out.println("Reading cities' data from file...");
             line = reader.readLine();
             while (line != null)
