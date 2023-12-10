@@ -49,8 +49,9 @@ public class PQ <T>
         
         heap[++size] = item;
 
-        // Let the newly added item swim and return its position
-        idHeapPos[(int) item]=swim(size);
+        // Let the newly added item swim
+        idHeapPos[(int) item]=size;
+        swim(size);
     }
 
     
@@ -85,14 +86,13 @@ public class PQ <T>
 
         // Replace root item with the one at rightmost leaf
         heap[1] = heap[size];
-        T item = heap[size];
        
         size--;
 
         // Dispose the rightmost leaf
         // Sink the new root element
-        
-        idHeapPos[(int) item]=sink(1);
+        idHeapPos[(int)heap[1]]=1;//temporar position
+        sink(1);
         // Return the int removed
         return root;
     }
@@ -107,7 +107,9 @@ public class PQ <T>
         T removed= heap[idx];
         heap[idx]= heap[size];
         size--;
-        idHeapPos[(int) heap[idx]]=sink(id);
+        
+        idHeapPos[(int) heap[idx]] = idx;
+        sink(idx);
         
 		return removed;    	
     }
@@ -119,11 +121,11 @@ public class PQ <T>
      *
      * @param i the index of the item to swim
      */
-    private int swim(int i) 
+    private void swim(int i) 
     {
         // if i is root (i==1) return
         if (i == 1)
-            return i;
+            return;
 
         // find parent
         int parent = i / 2;
@@ -136,7 +138,7 @@ public class PQ <T>
             parent = i / 2;
             
         }
-        return i;
+        return;
     }
 
     /**
@@ -144,7 +146,7 @@ public class PQ <T>
      *
      * @param i the index of the item to sink
      */
-    private int sink(int i) 
+    private void sink(int i) 
     {
         // determine left, right child
         int left = 2 * i;
@@ -152,7 +154,7 @@ public class PQ <T>
 
         // if 2*i > size, node i is a leaf return
         if (left > size)
-        	return i;
+        	return ;
 
         // while haven't reached the leafs
         while (left <= size) 
@@ -168,7 +170,7 @@ public class PQ <T>
             // If the heap condition holds, stop. Else swap and go on.
             // child smaller than parent
             if (comparator.compare(heap[i], heap[min]) < 0)
-            	return i;
+            	return;
             else 
             {
                 swap(i, min);
@@ -178,7 +180,7 @@ public class PQ <T>
             }
            
         }
-		return i;
+		return;
     }
 
     /**
@@ -189,6 +191,7 @@ public class PQ <T>
      */
     private void swap(int i, int j) 
     {
+    	//update the stored position of the id
     	idHeapPos[(int) heap[i]]=j;
     	idHeapPos[(int) heap[j]]=i;
          
@@ -220,7 +223,7 @@ public class PQ <T>
         PQ<Integer> minPriorityQueue = new PQ<>(new IntegerComparator());
 //        minPriorityQueue = generateRandomHeap(heapSize);
         // Adding 10 elements to the heap
-        for (int i = 1; i <= 10; i++) 
+        for (int i = 1; i <= 999; i++) 
         {
         	minPriorityQueue.insert(i);
         }
@@ -228,7 +231,7 @@ public class PQ <T>
         System.out.println("Initial Heap:");
         minPriorityQueue.printHeapTree();
         
-        System.out.println("Is there a missmatch: "+minPriorityQueue.isAmismatch());
+        minPriorityQueue.isAmismatch();
         //minPriorityQueue.insert(300);
 
 //      Testing min method
@@ -237,14 +240,14 @@ public class PQ <T>
 //      Testing getMin method
         System.out.println("Removed min element: " + minPriorityQueue.getMin());
         minPriorityQueue.printHeapTree();
-        System.out.println("Is there a missmatch: "+minPriorityQueue.isAmismatch());
+        minPriorityQueue.isAmismatch();
         
 //      Testing min method
         System.out.println("Min element: " + minPriorityQueue.min());
 //      Testing remove method
         System.out.println("Removed element 5: " + minPriorityQueue.remove(5));
         minPriorityQueue.printHeapTree();
-        System.out.println("Is there a missmatch: "+minPriorityQueue.isAmismatch());
+        minPriorityQueue.isAmismatch();
 
 //      Displaying the size of the priority queue
         System.out.println("Size of priority queue: " + minPriorityQueue.size());        
@@ -291,12 +294,12 @@ public class PQ <T>
     	{
 			if(heap[i]!=null && i!=idHeapPos[(int) heap[i]])
 			{
-				System.out.println("there is a mismatch in position"+heap[i]);
+				System.out.println("there IS a mismatch in position"+heap[i]);
 				return true;
 			}
 		
 		}
-    	System.out.println("there is not a mismatch");
+    	System.out.println("there is NOT a mismatch");
     	return false;
     }
 }
