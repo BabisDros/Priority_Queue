@@ -1,9 +1,8 @@
-import java.awt.print.Printable;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+
 public class PQ <T>
 {
 	private T[] heap; // the heap to store data in
@@ -104,10 +103,11 @@ public class PQ <T>
         if (isEmpty())
             return null;
         
-        T removed= heap[idHeapPos[id]];
-        heap[id]= heap[size];
+        int idx=idHeapPos[id];
+        T removed= heap[idx];
+        heap[idx]= heap[size];
         size--;
-        sink(id);
+        idHeapPos[(int) heap[idx]]=sink(id);
         
 		return removed;    	
     }
@@ -213,33 +213,41 @@ public class PQ <T>
 
         heap = newHeap;
     }
+    int elementForDebug=0;
     public static void main(String[] args) 
     {        
         int heapSize = 10;
-        PQ<Integer> minPriorityQueue = generateRandomHeap(heapSize);
-
+        PQ<Integer> minPriorityQueue = new PQ<>(new IntegerComparator());
+//        minPriorityQueue = generateRandomHeap(heapSize);
+        // Adding 10 elements to the heap
+        for (int i = 1; i <= 10; i++) 
+        {
+        	minPriorityQueue.insert(i);
+        }
         // Print the randomly generated heap
-        System.out.println("Randomly Generated Heap:");
+        System.out.println("Initial Heap:");
         minPriorityQueue.printHeapTree();
         
         System.out.println("Is there a missmatch: "+minPriorityQueue.isAmismatch());
         //minPriorityQueue.insert(300);
 
-//        // Testing min method
+//      Testing min method
         System.out.println("Min element: " + minPriorityQueue.min());
         
-//        // Testing getMin method
+//      Testing getMin method
         System.out.println("Removed min element: " + minPriorityQueue.getMin());
         minPriorityQueue.printHeapTree();
         System.out.println("Is there a missmatch: "+minPriorityQueue.isAmismatch());
         
-//      // Testing min method
+//      Testing min method
         System.out.println("Min element: " + minPriorityQueue.min());
-//        // Testing remove method
-//        System.out.println("Removed element 2: " + minPriorityQueue.remove(2));
-//        minPriorityQueue.printHeapTree();
-//        // Displaying the size of the priority queue
-//        System.out.println("Size of priority queue: " + minPriorityQueue.size());        
+//      Testing remove method
+        System.out.println("Removed element 5: " + minPriorityQueue.remove(5));
+        minPriorityQueue.printHeapTree();
+        System.out.println("Is there a missmatch: "+minPriorityQueue.isAmismatch());
+
+//      Displaying the size of the priority queue
+        System.out.println("Size of priority queue: " + minPriorityQueue.size());        
     }
 
     
@@ -288,7 +296,7 @@ public class PQ <T>
 			}
 		
 		}
-    	
+    	System.out.println("there is not a mismatch");
     	return false;
     }
 }
