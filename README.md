@@ -3,10 +3,10 @@
 - Do not use java's data structures, we can use the one we made from previous project
 ```
 ## Part A
-- [ ] Make City Class
-- [ ] Make CityInterface
-- [ ] Make Comparable<City> Interface (compareTo)
-- [ ] Make Influenza_k.java 
+- [x] Make City Class
+- [x] Make CityInterface
+- [x] Make Comparable<City> Interface (compareTo)
+- [x] Make Influenza_k.java 
 
 **public interface CityInterface** \
   { \
