@@ -1,13 +1,17 @@
+import java.awt.print.Printable;
 import java.util.Comparator;
-
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.Set;
 public class PQ <T>
 {
 	private T[] heap; // the heap to store data in
     private int size; // current size of the queue
     private Comparator<T> comparator; // the comparator to use between the objects
-
-    private static final int DEFAULT_CAPACITY = 4; // default capacity
-    private static final int AUTOGROW_SIZE = 4; // default auto grow
+    private int[] idHeapPos=new int[1000];//to store the position of id
+    private static final int DEFAULT_CAPACITY = 5; // default capacity
+    private static final int AUTOGROW_COEF = 2; // default auto grow
 
     /**
      * Queue constructor
@@ -23,9 +27,7 @@ public class PQ <T>
 
     boolean isEmpty()
     {
-    	if (size == 0)
-    		return false;
-		return false;
+    	return size == 0;
     }
     
     int size()
@@ -39,16 +41,17 @@ public class PQ <T>
      * @param item
      */
     public void insert(T item) 
-    {
+    { 	 //System.out.println((int) item);
         // Check available space
-        if (size == 0.75*(heap.length - 1))
+        if (size ==Math.round(0.75*(heap.length - 1))) 
             grow();
 
         // Place item at the next available position
+        
         heap[++size] = item;
 
-        // Let the newly added item swim
-        swim(size);
+        // Let the newly added item swim and return its position
+        idHeapPos[(int) item]=swim(size);
     }
 
     
@@ -60,7 +63,7 @@ public class PQ <T>
     public T min() 
     {
         // Ensure not empty
-        if (size == 0)
+        if (isEmpty())
             return null;
 
         // return root without removing
@@ -75,7 +78,7 @@ public class PQ <T>
     public T getMin() 
     {
         // Ensure not empty
-        if (size == 0)
+        if (isEmpty())
             return null;
 
         // Keep a reference to the root item
@@ -83,20 +86,30 @@ public class PQ <T>
 
         // Replace root item with the one at rightmost leaf
         heap[1] = heap[size];
+        T item = heap[size];
+       
         size--;
 
         // Dispose the rightmost leaf
         // Sink the new root element
-        sink(1);
-
+        
+        idHeapPos[(int) item]=sink(1);
         // Return the int removed
         return root;
     }
     
-    public T remove(T item) 
+    public T remove(int id) 
     {
-		return item;
-    	
+    	// Ensure not empty
+        if (isEmpty())
+            return null;
+        
+        T removed= heap[idHeapPos[id]];
+        heap[id]= heap[size];
+        size--;
+        sink(id);
+        
+		return removed;    	
     }
 
 
@@ -106,62 +119,66 @@ public class PQ <T>
      *
      * @param i the index of the item to swim
      */
-    private void swim(int i) {
+    private int swim(int i) 
+    {
         // if i is root (i==1) return
         if (i == 1)
-            return;
+            return i;
 
         // find parent
         int parent = i / 2;
 
         // compare parent with child i
-        while (i != 1 && comparator.compare(heap[i], heap[parent]) > 0) {
+        while (i != 1 && comparator.compare(heap[i], heap[parent]) < 0) 
+        {
             swap(i, parent);
             i = parent;
             parent = i / 2;
+            
         }
-
-        // recursive function
-        // if (heap[i] > heap[parent]) {
-        //     swap(i, parent);
-        //     swim(parent);
-        // }
+        return i;
     }
 
     /**
-     * Helper function to swim items to the bottom
+     * Helper function to sink items to the bottom
      *
      * @param i the index of the item to sink
      */
-    private void sink(int i) {
+    private int sink(int i) 
+    {
         // determine left, right child
         int left = 2 * i;
         int right = left + 1;
 
         // if 2*i > size, node i is a leaf return
         if (left > size)
-            return;
+        	return i;
 
         // while haven't reached the leafs
-        while (left <= size) {
-            // Determine the largest child of node i
-            int max = left;
-            if (right <= size) {
+        while (left <= size) 
+        {
+            // Determine the smallest child of node i
+            int min = left;
+            if (right <= size) 
+            {
                 if (comparator.compare(heap[left], heap[right]) < 0)
-                    max = right;
+                    min = left;
             }
 
             // If the heap condition holds, stop. Else swap and go on.
             // child smaller than parent
-            if (comparator.compare(heap[i], heap[max]) >= 0)
-                return;
-            else {
-                swap(i, max);
-                i = max;
+            if (comparator.compare(heap[i], heap[min]) < 0)
+            	return i;
+            else 
+            {
+                swap(i, min);
+                i = min;
                 left = i * 2;
                 right = left + 1;
             }
+           
         }
+		return i;
     }
 
     /**
@@ -172,6 +189,9 @@ public class PQ <T>
      */
     private void swap(int i, int j) 
     {
+    	idHeapPos[(int) heap[i]]=j;
+    	idHeapPos[(int) heap[j]]=i;
+         
         T tmp = heap[i];
         heap[i] = heap[j];
         heap[j] = tmp;
@@ -182,38 +202,96 @@ public class PQ <T>
      */
     private void grow() 
     {
-        T[] newHeap = (T[]) new Object[heap.length + AUTOGROW_SIZE];
+        T[] newHeap = (T[]) new Object[heap.length * AUTOGROW_COEF];
 
         // copy array
 		//(notice: in the priority queue, elements are located in the array slots with positions in [1, size])
-        for (int i = 0; i <= size; i++) {
+        for (int i = 0; i <= size; i++) 
+        {
             newHeap[i] = heap[i];
         }
 
         heap = newHeap;
     }
     public static void main(String[] args) 
-    {
-        PQ<Integer> minPriorityQueue = new PQ<Integer>(null);
+    {        
+        int heapSize = 10;
+        PQ<Integer> minPriorityQueue = generateRandomHeap(heapSize);
+
+        // Print the randomly generated heap
+        System.out.println("Randomly Generated Heap:");
+        minPriorityQueue.printHeapTree();
         
-        // Testing insert method
-        minPriorityQueue.insert(5);
-        minPriorityQueue.insert(2);
-        minPriorityQueue.insert(8);
-        minPriorityQueue.insert(1);
-        minPriorityQueue.insert(6);
+        System.out.println("Is there a missmatch: "+minPriorityQueue.isAmismatch());
+        //minPriorityQueue.insert(300);
 
-        // Testing min method
+//        // Testing min method
         System.out.println("Min element: " + minPriorityQueue.min());
-
-        // Testing getMin method
+        
+//        // Testing getMin method
         System.out.println("Removed min element: " + minPriorityQueue.getMin());
-
-        // Testing remove method
-        System.out.println("Removed element 2: " + minPriorityQueue.remove(2));
-
-        // Displaying the size of the priority queue
-        System.out.println("Size of priority queue: " + minPriorityQueue.size());
+        minPriorityQueue.printHeapTree();
+        System.out.println("Is there a missmatch: "+minPriorityQueue.isAmismatch());
+        
+//      // Testing min method
+        System.out.println("Min element: " + minPriorityQueue.min());
+//        // Testing remove method
+//        System.out.println("Removed element 2: " + minPriorityQueue.remove(2));
+//        minPriorityQueue.printHeapTree();
+//        // Displaying the size of the priority queue
+//        System.out.println("Size of priority queue: " + minPriorityQueue.size());        
     }
 
+    
+    public static PQ<Integer> generateRandomHeap(int heapSize) 
+    {
+    	 Random random = new Random();
+    	 Set<Integer> uniqueNumbers = new HashSet<>();//for uniqueness
+         PQ<Integer> randomHeap = new PQ<>(new IntegerComparator());
+
+         while (uniqueNumbers.size() < heapSize) 
+         {
+             int randomNumber = random.nextInt(100)+1; // Adjust the range as needed
+             if (uniqueNumbers.add(randomNumber)) 
+             {
+                 randomHeap.insert(randomNumber);
+             }
+         }
+
+         return randomHeap;
+    }
+    public void printHeapTree() 
+    {
+        int elementsInLevel = 1;
+        
+        for (int i = 1; i <= size; i++) 
+        {
+            System.out.print(heap[i] + " ");
+            
+            if (i == elementsInLevel) 
+            {
+                System.out.println(); // Move to the next level
+                elementsInLevel = elementsInLevel * 2+1;
+            }
+        }
+        System.out.println();
+    }
+    
+    public boolean isAmismatch() 
+    {
+    	for (int i=0;i<size;i++) 
+    	{
+			if(heap[i]!=null && i!=idHeapPos[(int) heap[i]])
+			{
+				System.out.println("there is a mismatch in position"+heap[i]);
+				return true;
+			}
+		
+		}
+    	
+    	return false;
+    }
 }
+
+
+
