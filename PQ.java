@@ -8,17 +8,19 @@ public class PQ
 	private City[] heap; // the heap to store data in
 	private int size; // current size of the queue
 	private int[] idHeapPos = new int[1000];// to store the position of the id in the heap with id as index. eg idHeapPos[id]=position in heap
-	private static final int DEFAULT_CAPACITY = 5; // default capacity
+	private int capacity; // default capacity
 	private static final int AUTOGROW_COEF = 2; // default auto grow
 
 	/**
 	 * Queue constructor
 	 *
 	 */
-	public PQ()
+	public PQ(int capacity)
 	{
-		this.heap = new City[DEFAULT_CAPACITY + 1];
+		this.capacity=capacity;
+		this.heap = new City[capacity + 1];
 		this.size = 0;
+
 	}
 
 	boolean isEmpty()
@@ -159,12 +161,13 @@ public class PQ
 			int min = left;
 			if (right <= size)
 			{
-				if (heap[left].CompareTo(heap[right]))
-					min = left;
+				if (heap[right].CompareTo(heap[left]))
+					min = right;
 			}
 
 			// If the heap condition holds, stop. Else swap and go on.
 			// child smaller than parent
+			
 			if (heap[i].CompareTo(heap[min]))
 				return;
 			else
@@ -218,11 +221,11 @@ public class PQ
 
 	public static void main(String[] args)
 	{
-		PQ minPriorityQueue = new PQ();
+		PQ minPriorityQueue = new PQ(10);
 		Set<Integer> uniqueIDs = new HashSet<>();
 		for (int i = 0; i < 10; i++)
 		{
-			City city = CityGenerator.generateCity();
+			City city = RandomCityGenerator.generateCity();
 
 			// Ensure unique IDs
 			if (uniqueIDs.contains(city.getID()))
@@ -260,7 +263,7 @@ public class PQ
 //      Testing min method
 		System.out.println("Min element: " + minPriorityQueue.min().getInfectRatio());
 //      Testing remove method
-		System.out.println("Removed element: " + minPriorityQueue.remove(9).getInfectRatio());
+		//System.out.println("Removed element: " + minPriorityQueue.remove(9).getInfectRatio());
 		minPriorityQueue.printHeapTree();
 		minPriorityQueue.isAmismatch();
 
