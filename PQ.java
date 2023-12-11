@@ -1,13 +1,12 @@
-import java.util.Comparator;
+
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-public class PQ <T>
+public class PQ
 {
-	private T[] heap; // the heap to store data in
+	private City[] heap; // the heap to store data in
     private int size; // current size of the queue
-    private Comparator<T> comparator; // the comparator to use between the objects
     private int[] idHeapPos=new int[1000];//to store the position of id
     private static final int DEFAULT_CAPACITY = 5; // default capacity
     private static final int AUTOGROW_COEF = 2; // default auto grow
@@ -17,11 +16,10 @@ public class PQ <T>
      *
      * @param comparator
      */
-    public PQ(Comparator<T> comparator) 
+    public PQ() 
     {
-        this.heap = (T[]) new Object[DEFAULT_CAPACITY + 1];
+        this.heap = new City[DEFAULT_CAPACITY + 1];
         this.size = 0;
-        this.comparator = comparator;
     }
 
     boolean isEmpty()
@@ -39,7 +37,7 @@ public class PQ <T>
      *
      * @param item
      */
-    public void insert(T item) 
+    public void insert(City item) 
     { 	 //System.out.println((int) item);
         // Check available space
         if (size ==Math.round(0.75*(heap.length - 1))) 
@@ -50,7 +48,7 @@ public class PQ <T>
         heap[++size] = item;
 
         // Let the newly added item swim
-        idHeapPos[(int) item]=size;
+        idHeapPos[item.getID()]=size;
         swim(size);
     }
 
@@ -60,7 +58,7 @@ public class PQ <T>
      *
      * @return the head of the queue
      */
-    public T min() 
+    public City min() 
     {
         // Ensure not empty
         if (isEmpty())
@@ -75,14 +73,14 @@ public class PQ <T>
      *
      * @return the head of the queue
      */
-    public T getMin() 
+    public City getMin() 
     {
         // Ensure not empty
         if (isEmpty())
             return null;
 
         // Keep a reference to the root item
-        T root = heap[1];
+        City root = heap[1];
 
         // Replace root item with the one at rightmost leaf
         heap[1] = heap[size];
@@ -91,24 +89,24 @@ public class PQ <T>
 
         // Dispose the rightmost leaf
         // Sink the new root element
-        idHeapPos[(int)heap[1]]=1;//temporar position
+        idHeapPos[heap[1].getID()]=1;//temporar position
         sink(1);
         // Return the int removed
         return root;
     }
     
-    public T remove(int id) 
+    public City remove(int id) 
     {
     	// Ensure not empty
         if (isEmpty())
             return null;
         
         int idx=idHeapPos[id];
-        T removed= heap[idx];
+        City removed= heap[idx];
         heap[idx]= heap[size];
         size--;
         
-        idHeapPos[(int) heap[idx]] = idx;
+        idHeapPos[heap[idx].getID()] = idx;
         sink(idx);
         
 		return removed;    	
@@ -131,7 +129,7 @@ public class PQ <T>
         int parent = i / 2;
 
         // compare parent with child i
-        while (i != 1 && comparator.compare(heap[i], heap[parent]) < 0) 
+        while (i != 1 && (heap[i].CompareTo(heap[parent])))        		 
         {
             swap(i, parent);
             i = parent;
@@ -163,13 +161,13 @@ public class PQ <T>
             int min = left;
             if (right <= size) 
             {
-                if (comparator.compare(heap[left], heap[right]) < 0)
+                if (heap[left].CompareTo(heap[right]))
                     min = left;
             }
 
             // If the heap condition holds, stop. Else swap and go on.
             // child smaller than parent
-            if (comparator.compare(heap[i], heap[min]) < 0)
+            if (heap[i].CompareTo(heap[min]))
             	return;
             else 
             {
@@ -192,10 +190,10 @@ public class PQ <T>
     private void swap(int i, int j) 
     {
     	//update the stored position of the id
-    	idHeapPos[(int) heap[i]]=j;
-    	idHeapPos[(int) heap[j]]=i;
+    	idHeapPos[heap[i].getID()]=j;
+    	idHeapPos[heap[j].getID()]=i;
          
-        T tmp = heap[i];
+        City tmp = heap[i];
         heap[i] = heap[j];
         heap[j] = tmp;
     }
@@ -205,7 +203,7 @@ public class PQ <T>
      */
     private void grow() 
     {
-        T[] newHeap = (T[]) new Object[heap.length * AUTOGROW_COEF];
+    	City[] newHeap = new City[heap.length * AUTOGROW_COEF];
 
         // copy array
 		//(notice: in the priority queue, elements are located in the array slots with positions in [1, size])
@@ -216,36 +214,53 @@ public class PQ <T>
 
         heap = newHeap;
     }
-    int elementForDebug=0;
+    
+    /*----------helper classes for debug------------*/
+    
     public static void main(String[] args) 
     {        
-        int heapSize = 10;
-        PQ<Integer> minPriorityQueue = new PQ<>(new IntegerComparator());
-//        minPriorityQueue = generateRandomHeap(heapSize);
-        // Adding 10 elements to the heap
-        for (int i = 1; i <= 999; i++) 
+    	 PQ minPriorityQueue = new PQ();
+        Set<Integer> uniqueIDs = new HashSet<>();
+        for (int i = 0; i < 10; i++) 
         {
-        	minPriorityQueue.insert(i);
+            City city = CityGenerator.generateCity();
+            
+            // Ensure unique IDs
+            if (uniqueIDs.contains(city.getID())) {
+                System.out.println("Duplicate ID generated: " + city.getID());
+            }
+
+            uniqueIDs.add(city.getID());
+
+            // Print city details
+            System.out.println("City " + (i + 1) + ":");
+            System.out.println("ID: " + city.getID());
+            System.out.println("Name: " + city.getName());
+            System.out.println("Population: " + city.getPopulation());
+            System.out.println("Influenza Cases: " + city.getInfluenzaCases());
+            System.out.println();
+            minPriorityQueue.insert(city);
         }
         // Print the randomly generated heap
         System.out.println("Initial Heap:");
-        minPriorityQueue.printHeapTree();
+       
+		minPriorityQueue.printHeapTree();
         
         minPriorityQueue.isAmismatch();
         //minPriorityQueue.insert(300);
 
 //      Testing min method
-        System.out.println("Min element: " + minPriorityQueue.min());
+        System.out.println("Min element: " + minPriorityQueue.min().getInfectRatio());
         
 //      Testing getMin method
-        System.out.println("Removed min element: " + minPriorityQueue.getMin());
+        System.out.println("Removed min element: " + minPriorityQueue.getMin().getInfectRatio());
         minPriorityQueue.printHeapTree();
         minPriorityQueue.isAmismatch();
         
 //      Testing min method
-        System.out.println("Min element: " + minPriorityQueue.min());
+        System.out.println("Min element: " + minPriorityQueue.min().getInfectRatio());
 //      Testing remove method
-        System.out.println("Removed element 5: " + minPriorityQueue.remove(5));
+        System.out.println("Removed element: " + minPriorityQueue.remove(9).getInfectRatio());
         minPriorityQueue.printHeapTree();
         minPriorityQueue.isAmismatch();
 
@@ -254,30 +269,15 @@ public class PQ <T>
     }
 
     
-    public static PQ<Integer> generateRandomHeap(int heapSize) 
-    {
-    	 Random random = new Random();
-    	 Set<Integer> uniqueNumbers = new HashSet<>();//for uniqueness
-         PQ<Integer> randomHeap = new PQ<>(new IntegerComparator());
-
-         while (uniqueNumbers.size() < heapSize) 
-         {
-             int randomNumber = random.nextInt(100)+1; // Adjust the range as needed
-             if (uniqueNumbers.add(randomNumber)) 
-             {
-                 randomHeap.insert(randomNumber);
-             }
-         }
-
-         return randomHeap;
-    }
+    
+    
     public void printHeapTree() 
     {
         int elementsInLevel = 1;
         
         for (int i = 1; i <= size; i++) 
         {
-            System.out.print(heap[i] + " ");
+            System.out.print(heap[i].getInfectRatio() + " ");
             
             if (i == elementsInLevel) 
             {
@@ -292,7 +292,7 @@ public class PQ <T>
     {
     	for (int i=0;i<size;i++) 
     	{
-			if(heap[i]!=null && i!=idHeapPos[(int) heap[i]])
+			if(heap[i]!=null && i!=idHeapPos[heap[i].getID()])
 			{
 				System.out.println("there IS a mismatch in position"+heap[i]);
 				return true;
@@ -302,6 +302,62 @@ public class PQ <T>
     	System.out.println("there is NOT a mismatch");
     	return false;
     }
+    
+    public class CityGenerator 
+    {
+        private static int cityCount = 0;
+
+        public static City generateCity() {
+            City city = new City();
+
+            try {
+                city.setID(cityCount + 1); // Unique ID
+                city.setName(generateCityName());
+                city.setPopulation((cityCount + 1) * 1000); // Example population based on city count
+                city.setInfluenzaCases(cityCount % 100); // Example influenza cases based on city count
+                city.calculateDensity();
+                cityCount++;
+            } catch (Exception e) {
+                e.printStackTrace(); // Handle the exception appropriately
+            }
+
+            return city;
+        }
+
+        private static String generateCityName() {
+            return "City" + (cityCount + 1);
+        }
+
+        public static void main(String[] args) {
+            City generatedCity = generateCity();
+            System.out.println(generatedCity);
+        }
+    }
+
+    public class RandomCityGenerator 
+    {
+    	public static City generateCity() 
+        {
+            City city = new City();
+            Random random = new Random();
+
+            try 
+            {
+                city.setID(random.nextInt(1000) + 1); // Unique ID
+                city.setName("City" + city.getID());
+                city.setPopulation(random.nextInt(1000000) + 1000);
+                city.setInfluenzaCases(random.nextInt(100));
+                city.calculateDensity();
+            } 
+            catch (Exception e) 
+            {
+                e.printStackTrace(); // Handle the exception appropriately
+            }
+
+            return city;
+        }
+    }
+	
 }
 
 
