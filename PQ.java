@@ -3,29 +3,31 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import javax.sql.rowset.FilteredRowSet;
+
 public class PQ
 {
 	private City[] heap; // the heap to store data in
 	private int size; // current size of the queue
-	private int[] idHeapPos = new int[1000];// to store the position of the id in the heap with id as index. eg idHeapPos[id]=position in heap
-	//private int capacity; // default capacity
+	private int[] idHeapPos = new int[1000];// to store the position of the id in the heap with id as index. eg
+											// idHeapPos[id]=position in heap
 	private static final int AUTOGROW_COEF = 2; // default auto grow
 	private Type currentType;
-	public enum Type 
+
+	public enum Type
 	{
-        MIN, MAX
-    }
+		MIN, MAX
+	}
+
 	/**
 	 * Queue constructor
 	 *
 	 */
 	public PQ(int capacity, Type type)
 	{
-		currentType =type;
-		//this.capacity=capacity;
+		currentType = type;
 		this.heap = new City[capacity + 1];
 		this.size = 0;
-
 	}
 
 	boolean isEmpty()
@@ -58,10 +60,12 @@ public class PQ
 		swim(size);
 	}
 
-	/*We could create max, min that wοuld get data from peek, getMax, getMin that would get data from getHead according to the type of heap but 
-	 it is preffered to use generic names in order to avoid creating multiple methods.
-
-	*/
+	/*
+	 * We could create max, min that wοuld get data from peek, getMax, getMin that
+	 * would get data from getHead according to the type of heap but it is preffered
+	 * to use generic names in order to avoid creating multiple methods.
+	 * 
+	 */
 	/**
 	 * Retrieves, but does not remove, the head of this queue, or returns null if
 	 * this queue is empty.
@@ -84,7 +88,7 @@ public class PQ
 	 *
 	 * @return the head of the queue
 	 */
-	
+
 	public City getHead()
 	{
 		// Ensure not empty
@@ -101,12 +105,12 @@ public class PQ
 
 		// Dispose the rightmost leaf
 		// Sink the new root element
-		idHeapPos[heap[1].getID()] = 1;//initial position. Will be updated in if there is a swap.
+		idHeapPos[heap[1].getID()] = 1;// initial position. Will be updated in if there is a swap.
 		sink(1);
 		// Return the int removed
 		return root;
 	}
-	
+
 	public City remove(int id)
 	{
 		// Ensure not empty
@@ -118,10 +122,35 @@ public class PQ
 		heap[idx] = heap[size];
 		size--;
 
-		idHeapPos[heap[idx].getID()] = idx;//initial position. Will be updated in if there is a swap.
+		idHeapPos[heap[idx].getID()] = idx;// initial position. Will be updated in if there is a swap.
 		sink(idx);
 
 		return removed;
+	}
+
+	public City removeMax() throws Exception
+	{
+		if (isEmpty())
+			throw new Exception("Trying to remove frome empty Queue");
+		// from discrete math: leaves= (noOfNodes + 1)/2
+		int noOfLeaves = (size + 1) / 2;
+		System.out.println("LEAVES=" + noOfLeaves + " size = " + size);
+		float max = heap[size].getInfectRatio();
+		int index = size;
+
+		int beforeLastLeaf = size - 1;
+		int firstLeafIdx = size - noOfLeaves + 1;
+		for (int i = beforeLastLeaf; i >= firstLeafIdx; i--)
+		{
+			float currentInfectRatio = heap[i].getInfectRatio();
+
+			if (currentInfectRatio > max)
+			{
+				max = currentInfectRatio;
+				index = i;
+			}
+		}
+		return remove(heap[index].getID());
 	}
 
 	/**
@@ -139,8 +168,8 @@ public class PQ
 		int parent = i / 2;
 
 		// compare parent with child i
-		while (i != 1 && (currentType==Type.MIN && heap[i].CompareTo(heap[parent])
-				|| (currentType==Type.MAX && heap[parent].CompareTo(heap[i]))))
+		while (i != 1 && (currentType == Type.MIN && heap[i].CompareTo(heap[parent])
+				|| (currentType == Type.MAX && heap[parent].CompareTo(heap[i]))))
 		{
 			swap(i, parent);
 			i = parent;
@@ -167,26 +196,26 @@ public class PQ
 
 		// while haven't reached the leafs
 		while (left <= size)
-		{			
-			int min=left;
-			int max=left;
-			int currentChild=left;
+		{
+			int min = left;
+			int max = left;
+			int currentChild = left;
 			if (right <= size)
-			{	
-				if((currentType==Type.MIN && heap[right].CompareTo(heap[left])) ||
-						 (currentType==Type.MAX && heap[left].CompareTo(heap[right])))
-				{				
+			{
+				if ((currentType == Type.MIN && heap[right].CompareTo(heap[left]))
+						|| (currentType == Type.MAX && heap[left].CompareTo(heap[right])))
+				{
 					min = right;
-					max=right;
-					currentChild=right;		
+					max = right;
+					currentChild = right;
 				}
 			}
 
 			// If the heap condition holds, stop. Else swap and go on.
-			//heap[i] is parent
-			if ((currentType==Type.MIN && heap[i].CompareTo(heap[min])) ||
-					(currentType==Type.MAX && heap[max].CompareTo(heap[i])))
-				return;		
+			// heap[i] is parent
+			if ((currentType == Type.MIN && heap[i].CompareTo(heap[min]))
+					|| (currentType == Type.MAX && heap[max].CompareTo(heap[i])))
+				return;
 			else
 			{
 				swap(i, currentChild);
@@ -238,11 +267,11 @@ public class PQ
 
 	public static void main(String[] args) throws Exception
 	{
-		PQ minPriorityQueue = new PQ(5,Type.MIN);
+		PQ minPriorityQueue = new PQ(5, Type.MIN);
 		Set<Integer> uniqueIDs = new HashSet<>();
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 6; i++)
 		{
-			City city = RandomCityGenerator.generateCity();
+			City city = CityGenerator.generateCity();
 
 			// Ensure unique IDs
 			if (uniqueIDs.contains(city.getID()))
@@ -273,14 +302,21 @@ public class PQ
 		System.out.println("Min element: " + minPriorityQueue.peek().getInfectRatio());
 
 //      Testing getMin method
-		System.out.println("Removed min element: " + minPriorityQueue.getHead().getInfectRatio());
+//		System.out.println("Removed min element: " + minPriorityQueue.getHead().getInfectRatio());
 		minPriorityQueue.printHeapTree();
 		minPriorityQueue.isAmismatch();
 
 //      Testing min method
-		System.out.println("Removed min element: " + minPriorityQueue.getHead().getInfectRatio());
+		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
+		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
+		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
+		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
+		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
+		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
+		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
 //      Testing remove method
-		//System.out.println("Removed element: " + minPriorityQueue.remove(9).getInfectRatio());
+		// System.out.println("Removed element: " +
+		// minPriorityQueue.remove(9).getInfectRatio());
 		minPriorityQueue.printHeapTree();
 		minPriorityQueue.isAmismatch();
 
@@ -335,8 +371,8 @@ public class PQ
 				city.setInfluenzaCases(cityCount % 100); // Example influenza cases based on city count
 				city.calculateDensity();
 				cityCount++;
-			} 
-			
+			}
+
 			catch (Exception e)
 			{
 				e.printStackTrace(); // Handle the exception appropriately
