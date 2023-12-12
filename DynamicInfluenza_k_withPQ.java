@@ -79,18 +79,7 @@ public class DynamicInfluenza_k_withPQ
 				{
 					database.removeMax();
 				}
-
-//				if (lineCounter % 5 == 0)
-//				{
-//					for (int i = 1; i <= 5; i++)
-//					{
-//						City city=database.getHead();
-//						System.out.println(city.getName()+" "+city.getInfectRatio());
-//						database.insert(city);
-//					}
-//					System.out.println();
-//				}
-
+				
 				line = reader.readLine();
 			}
 			
