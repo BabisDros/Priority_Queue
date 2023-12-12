@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class DynamicInfluenza_k_withPQ
 {
-	public static void main(String[] args) throws Exception
+	public static void main(String[] args)
 	{
 		Scanner input = new Scanner(System.in);
 		int k;
@@ -35,7 +35,7 @@ public class DynamicInfluenza_k_withPQ
 		input.close();
 	}
 
-	public static void readData(PQ database, String fileName, int k) throws Exception
+	public static void readData(PQ database, String fileName, int k)
 	{
 		String line, data = "";
 		BufferedReader reader;
