@@ -33,9 +33,7 @@ public class PQ
 
 	public PQ(Type type)
 	{
-		currentType = type;
-		this.heap = new City[DEFAULT_SIZE + 1];
-		this.size = 0;
+		this(DEFAULT_SIZE,type);
 	}
 
 	boolean isEmpty()
