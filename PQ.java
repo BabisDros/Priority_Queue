@@ -61,9 +61,9 @@ public class PQ
 	}
 
 	/*
-	 * We could create max, min that wοuld get data from peek, getMax, getMin that
-	 * would get data from getHead according to the type of heap but it is preffered
-	 * to use generic names in order to avoid creating multiple methods.
+	 * We could create max, min that wοuld get data from peek and getMax, getMin
+	 * that would get data from getHead according to the type of heap, but it is
+	 * preferred to use generic names in order to avoid creating multiple methods.
 	 * 
 	 */
 	/**
@@ -88,7 +88,6 @@ public class PQ
 	 *
 	 * @return the head of the queue
 	 */
-
 	public City getHead()
 	{
 		// Ensure not empty
@@ -128,18 +127,25 @@ public class PQ
 		return removed;
 	}
 
-	public City removeMax() throws Exception
+	/**
+	 * Retrieves and removes the max of this queue, or returns null if this queue is
+	 * empty.
+	 *
+	 * @return the head of the queue
+	 */
+	public City removeMax()
 	{
 		if (isEmpty())
-			throw new Exception("Trying to remove frome empty Queue");
+			return null;
 		// from discrete math: leaves= (noOfNodes + 1)/2
 		int noOfLeaves = (size + 1) / 2;
-		System.out.println("LEAVES=" + noOfLeaves + " size = " + size);
+
 		float max = heap[size].getInfectRatio();
 		int index = size;
 
 		int beforeLastLeaf = size - 1;
 		int firstLeafIdx = size - noOfLeaves + 1;
+		//compare with the other leaves and find max
 		for (int i = beforeLastLeaf; i >= firstLeafIdx; i--)
 		{
 			float currentInfectRatio = heap[i].getInfectRatio();
@@ -223,13 +229,13 @@ public class PQ
 				left = i * 2;
 				right = left + 1;
 			}
-
 		}
 		return;
 	}
 
 	/**
-	 * Helper function to swap two elements in the heap
+	 * Helper function to swap two elements in the heap and update the position in
+	 * the auxiliary idHeapPos
 	 *
 	 * @param i the first element's index
 	 * @param j the second element's index
@@ -269,7 +275,7 @@ public class PQ
 	{
 		PQ minPriorityQueue = new PQ(5, Type.MIN);
 		Set<Integer> uniqueIDs = new HashSet<>();
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 8; i++)
 		{
 			City city = CityGenerator.generateCity();
 
@@ -407,8 +413,7 @@ public class PQ
 				city.setPopulation(random.nextInt(1000000) + 1000);
 				city.setInfluenzaCases(random.nextInt(100));
 				city.calculateDensity();
-			} 
-			catch (Exception e)
+			} catch (Exception e)
 			{
 				e.printStackTrace(); // Handle the exception appropriately
 			}
