@@ -12,6 +12,7 @@ public class PQ
 	private int[] idHeapPos = new int[1000];// to store the position of the id in the heap with id as index. eg
 											// idHeapPos[id]=position in heap
 	private static final int AUTOGROW_COEF = 2; // default auto grow
+	private static final int DEFAULT_SIZE = 4;
 	private Type currentType;
 
 	public enum Type
@@ -27,6 +28,13 @@ public class PQ
 	{
 		currentType = type;
 		this.heap = new City[capacity + 1];
+		this.size = 0;
+	}
+
+	public PQ(Type type)
+	{
+		currentType = type;
+		this.heap = new City[DEFAULT_SIZE + 1];
 		this.size = 0;
 	}
 
