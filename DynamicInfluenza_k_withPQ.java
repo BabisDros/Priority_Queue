@@ -16,26 +16,26 @@ public class DynamicInfluenza_k_withPQ
 		// * ---------------- User interaction ---------------- *//
 		System.out.println("How many cities should be included in the ranking?");
 		k = Integer.parseInt(input.nextLine());
-		PQ database = new PQ(k, PQ.Type.MIN);
-		readData(database, fileName, k);
+		PQ safestCities = new PQ(2*k, PQ.Type.MIN);
+		readData(safestCities, fileName, k);
 
-		if (k > database.size())
+		if (k > safestCities.size())
 		{
 			System.out.println("There aren't enough cities to fill the ranks, the program shall exit now");
 			System.exit(0);
 		}
 
 		// * ---------------- Result ---------------- *//
-		System.out.println("The top k cities are:");
+		System.out.println("The safest "+ k +" cities are:");
 		for (int i = 0; i < k; i++)
 		{
-			System.out.println(database.getHead().getName());
+			System.out.println(safestCities.getHead().getName());
 		}
 
 		input.close();
 	}
 
-	public static void readData(PQ database, String fileName, int k)
+	public static void readData(PQ safestCities, String fileName, int k)
 	{
 		String line, data = "";
 		BufferedReader reader;
@@ -73,11 +73,11 @@ public class DynamicInfluenza_k_withPQ
 				objCity.setPopulation(Integer.parseInt(cityCharacteristics.removeFirst()));
 				objCity.setInfluenzaCases(Integer.parseInt(cityCharacteristics.removeFirst()));
 				objCity.calculateDensity();
-				database.insert(objCity); // add city to heap
+				safestCities.insert(objCity); // add city to heap
 
-				if (database.size() > k)
+				if (safestCities.size() > k)
 				{
-					database.removeMax();
+					safestCities.removeMax();
 				}
 				
 				line = reader.readLine();
