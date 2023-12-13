@@ -31,7 +31,7 @@ public class PQ
 
 	public PQ(Type type)
 	{
-		this(DEFAULT_SIZE,type);
+		this(DEFAULT_SIZE, type);
 	}
 
 	boolean isEmpty()
@@ -59,8 +59,11 @@ public class PQ
 
 		heap[++size] = city;
 
-		// Let the newly added item swim
+		// create a reference of the position in helper array. Will be updated in if
+		// swapped.
 		idHeapPos[city.getID()] = size;
+
+		// Let the newly added item swim
 		swim(size);
 	}
 
@@ -103,12 +106,15 @@ public class PQ
 
 		// Replace root item with the one at rightmost leaf
 		heap[1] = heap[size];
-		
+
 		// Dispose the rightmost leaf
 		size--;
-		
+
+		// create a reference of the position in helper array. Will be updated in if
+		// swapped.
+		idHeapPos[heap[1].getID()] = 1;
+
 		// Sink the new root element
-		idHeapPos[heap[1].getID()] = 1;// initial position. Will be updated in if there is a swap.
 		sink(1);
 		// Return the int removed
 		return root;
@@ -117,43 +123,41 @@ public class PQ
 	public City remove(int id)
 	{
 		// Ensure not empty
-		if (isEmpty())
+		if (id < 0 || id > idHeapPos.length - 1 || isEmpty())
 			return null;
-		//find the index of the id in the heap
+		// get the position of the id in the heap, from the helper array
 		int idx = idHeapPos[id];
-		
-		//if id not found, return null
-		if(idx==-1)
+
+		// if id not found, return null
+		if (idx == -1)
 			return null;
-		
-		//remove the reference to the position of the id from the helper array
-		idHeapPos[id]=-1;
+
+		// remove the reference to the position of the id from the helper array
+		idHeapPos[id] = -1;
 		City removed = heap[idx];
-		
-		//if the index removed is the not rightmost leaf, move the rightmost leaf to the removed position
-		if(idx!=size)
+
+		// if the index removed is the not the rightmost leaf, move the rightmost leaf to
+		// the removed position
+		if (idx != size)
 		{
 			heap[idx] = heap[size];
-			
-			//update the new position of the moved rightmost leaf, to the helper class.Will be updated if there is a swap.
+
+			// update the new position of the moved rightmost leaf, to the helper class.Will
+			// be updated if there is a swap.
 			idHeapPos[heap[idx].getID()] = idx;
-		}			
+		}
 		size--;
 
-		int noOfLeaves = totalLeaves();
-		int firstLeafIdx = size - noOfLeaves + 1;
-		
-		//if the removed index is a leaf swim
-		if(idx>=firstLeafIdx)
+		// if the removed index is a leaf swim
+		if (idx >= getFirstLeafIndex())
 		{
 			swim(idx);
 		}
-		
-		else 
+
+		else
 		{
 			sink(idx);
 		}
-		
 
 		return removed;
 	}
@@ -163,26 +167,29 @@ public class PQ
 	{
 		return (size + 1) / 2;
 	}
-	
+
+	int getFirstLeafIndex()
+	{
+		return size - totalLeaves() + 1;
+	}
+
 	/**
-	 * Retrieves and removes the max leaf of queue when it is a Min-Type ONLY. Returns null if this queue is
-	 * empty or Max-Type.
+	 * Retrieves and removes the max leaf of queue when it is a Min-Type ONLY.
+	 * Returns null if this queue is empty or Max-Type.
 	 *
 	 * @return the max
 	 */
 	public City removeMaxLeaf()
 	{
-		if (isEmpty() || currentType==Type.MAX)
+		if (isEmpty() || currentType == Type.MAX)
 			return null;
-		
-		int noOfLeaves = totalLeaves();
 
 		float max = heap[size].getInfectRatio();
 		int index = size;
 
 		int beforeLastLeaf = size - 1;
-		int firstLeafIdx = size - noOfLeaves + 1;
-		//compare with the other leaves and find max
+		int firstLeafIdx = getFirstLeafIndex();
+		// compare with the other leaves and find max
 		for (int i = beforeLastLeaf; i >= firstLeafIdx; i--)
 		{
 			float currentInfectRatio = heap[i].getInfectRatio();
@@ -312,7 +319,8 @@ public class PQ
 	{
 		PQ minPriorityQueue = new PQ(5, Type.MIN);
 		Set<Integer> uniqueIDs = new HashSet<>();
-		for (int i = 0; i < 8; i++)
+		float min=100;
+		for (int i = 0; i < 1000; i++)
 		{
 			City city = RandomCityGenerator.generateCity();
 
@@ -320,56 +328,33 @@ public class PQ
 			if (uniqueIDs.contains(city.getID()))
 			{
 				System.out.println("Duplicate ID generated: " + city.getID());
+				break;
 			}
 
 			uniqueIDs.add(city.getID());
-
+			if(min<city.getInfectRatio())
+			{
+				min=city.getInfectRatio();
+			}
 			// Print city details
-			System.out.println("City " + (i + 1) + ":");
-			System.out.println("ID: " + city.getID());
-			System.out.println("Name: " + city.getName());
-			System.out.println("Population: " + city.getPopulation());
-			System.out.println("Influenza Cases: " + city.getInfluenzaCases());
-			System.out.println();
+			System.out.println(city.getID() + " "+city.getName()+" "+city.getPopulation()+" "+city.getInfluenzaCases());
+//			System.out.println("City " + (i + 1) + ":");
+//			System.out.println("ID: " + city.getID());
+//			System.out.println("Name: " + city.getName());
+//			System.out.println("Population: " + city.getPopulation());
+//			System.out.println("Influenza Cases: " + city.getInfluenzaCases());
+//			System.out.println();
 			minPriorityQueue.insert(city);
+			if(minPriorityQueue.size>6)
+			{
+//				System.out.println("Min element: " + minPriorityQueue.peek().getInfectRatio());
+//				System.out.println("Removed MAX element: "+ minPriorityQueue.removeMaxLeaf().getInfectRatio());
+				//System.out.println("Removed min element: " + minPriorityQueue.getHead().getInfectRatio());
+//				minPriorityQueue.printHeapTree();
+//				minPriorityQueue.isAmismatch();
+				//System.out.println("Size of priority queue: " + minPriorityQueue.size());
+			}
 		}
-		// Print the randomly generated heap
-		System.out.println("Initial Heap:");
-
-		minPriorityQueue.printHeapTree();
-
-		minPriorityQueue.isAmismatch();
-		// minPriorityQueue.insert(300);
-
-//      Testing min method
-		System.out.println("Min element: " + minPriorityQueue.peek().getInfectRatio());
-
-//      Testing getMin method
-		System.out.println("Removed min element: " + minPriorityQueue.getHead().getInfectRatio());
-		minPriorityQueue.printHeapTree();
-		minPriorityQueue.isAmismatch();
-
-		
-//      Testing min method
-		
-		System.out.println("Removed MAX element: " + minPriorityQueue.removeMaxLeaf().getInfectRatio());
-		minPriorityQueue.insert(RandomCityGenerator.generateCity());
-		minPriorityQueue.printHeapTree();
-		minPriorityQueue.isAmismatch();
-		System.out.println("Removed MAX element: " + minPriorityQueue.removeMaxLeaf().getInfectRatio());
-		minPriorityQueue.insert(RandomCityGenerator.generateCity());
-		minPriorityQueue.printHeapTree();
-		minPriorityQueue.isAmismatch();
-		System.out.println("Removed MAX element: " + minPriorityQueue.removeMaxLeaf().getInfectRatio());
-		minPriorityQueue.printHeapTree();
-		minPriorityQueue.isAmismatch();
-//      Testing remove method
-//		 System.out.println("Removed element: " +minPriorityQueue.remove(3).getInfectRatio());		
-		minPriorityQueue.printHeapTree();
-		minPriorityQueue.isAmismatch();
-
-//      Displaying the size of the priority queue
-		System.out.println("Size of priority queue: " + minPriorityQueue.size());
 	}
 
 	public void printHeapTree()
@@ -395,7 +380,7 @@ public class PQ
 		{
 			if (heap[i] != null && i != idHeapPos[heap[i].getID()])
 			{
-				throw new Exception("there IS a mismatch in position" + heap[i]);
+				throw new Exception("there IS a mismatch in position" + heap[i].getID());
 			}
 
 		}
@@ -453,7 +438,7 @@ public class PQ
 				city.setID(random.nextInt(1000) + 1); // Unique ID
 				city.setName("City" + city.getID());
 				city.setPopulation(random.nextInt(1000000) + 1000);
-				city.setInfluenzaCases(random.nextInt(100));
+				city.setInfluenzaCases(random.nextInt(500));
 				city.calculateDensity();
 			} catch (Exception e)
 			{
