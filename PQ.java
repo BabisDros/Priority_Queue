@@ -3,8 +3,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import javax.sql.rowset.FilteredRowSet;
-
 public class PQ
 {
 	private City[] heap; // the heap to store data in
@@ -105,10 +103,10 @@ public class PQ
 
 		// Replace root item with the one at rightmost leaf
 		heap[1] = heap[size];
-
-		size--;
-
+		
 		// Dispose the rightmost leaf
+		size--;
+		
 		// Sink the new root element
 		idHeapPos[heap[1].getID()] = 1;// initial position. Will be updated in if there is a swap.
 		sink(1);
@@ -121,27 +119,41 @@ public class PQ
 		// Ensure not empty
 		if (isEmpty())
 			return null;
-
+//		find the index of the id in the heap
 		int idx = idHeapPos[id];
+		
+//		if id not found, return null
+		if(idx==-1)
+			return null;
+		
+		//remove the reference to the position of the id from the helper array
+		idHeapPos[id]=-1;
 		City removed = heap[idx];
-		heap[idx] = heap[size];
+		
+//		if the index removed is the not rightmost leaf, move the rightmost leaf to the removed position
+		if(idx!=size)
+		{
+			heap[idx] = heap[size];
+			
+//			update the new position of the moved rightmost leaf, to the helper class.Will be updated if there is a swap.
+			idHeapPos[heap[idx].getID()] = idx;
+		}			
 		size--;
-
-		idHeapPos[heap[idx].getID()] = idx;// initial position. Will be updated in if there is a swap.
+	
 		sink(idx);
 
 		return removed;
 	}
 
 	/**
-	 * Retrieves and removes the max of this queue, or returns null if this queue is
-	 * empty.
+	 * Retrieves and removes the max leaf of queue when it is a Min-Type ONLY. Returns null if this queue is
+	 * empty or Max-Type.
 	 *
-	 * @return the head of the queue
+	 * @return the max
 	 */
-	public City removeMax()
+	public City removeMaxLeaf()
 	{
-		if (isEmpty())
+		if (isEmpty() || currentType==Type.MAX)
 			return null;
 		// from discrete math: leaves= (noOfNodes + 1)/2
 		int noOfLeaves = (size + 1) / 2;
@@ -283,7 +295,7 @@ public class PQ
 		Set<Integer> uniqueIDs = new HashSet<>();
 		for (int i = 0; i < 8; i++)
 		{
-			City city = CityGenerator.generateCity();
+			City city = RandomCityGenerator.generateCity();
 
 			// Ensure unique IDs
 			if (uniqueIDs.contains(city.getID()))
@@ -314,21 +326,19 @@ public class PQ
 		System.out.println("Min element: " + minPriorityQueue.peek().getInfectRatio());
 
 //      Testing getMin method
-//		System.out.println("Removed min element: " + minPriorityQueue.getHead().getInfectRatio());
+		System.out.println("Removed min element: " + minPriorityQueue.getHead().getInfectRatio());
 		minPriorityQueue.printHeapTree();
 		minPriorityQueue.isAmismatch();
 
 //      Testing min method
-		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
-		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
-		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
-		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
-		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
-		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
-		System.out.println("Removed MAX element: " + minPriorityQueue.removeMax().getInfectRatio());
+		System.out.println("Removed MAX element: " + minPriorityQueue.removeMaxLeaf().getInfectRatio());
+		System.out.println("Removed MAX element: " + minPriorityQueue.removeMaxLeaf().getInfectRatio());
+		System.out.println("Removed MAX element: " + minPriorityQueue.removeMaxLeaf().getInfectRatio());
+		System.out.println("Removed MAX element: " + minPriorityQueue.removeMaxLeaf().getInfectRatio());
+		minPriorityQueue.printHeapTree();
+		minPriorityQueue.isAmismatch();
 //      Testing remove method
-		// System.out.println("Removed element: " +
-		// minPriorityQueue.remove(9).getInfectRatio());
+//		 System.out.println("Removed element: " +minPriorityQueue.remove(3).getInfectRatio());		
 		minPriorityQueue.printHeapTree();
 		minPriorityQueue.isAmismatch();
 
