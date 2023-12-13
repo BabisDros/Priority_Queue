@@ -77,7 +77,7 @@ public class DynamicInfluenza_k_withPQ
 
 				if (safestCities.size() > k)
 				{
-					safestCities.removeMax();
+					safestCities.removeMaxLeaf();
 				}
 				
 				line = reader.readLine();
