@@ -119,10 +119,10 @@ public class PQ
 		// Ensure not empty
 		if (isEmpty())
 			return null;
-//		find the index of the id in the heap
+		//find the index of the id in the heap
 		int idx = idHeapPos[id];
 		
-//		if id not found, return null
+		//if id not found, return null
 		if(idx==-1)
 			return null;
 		
@@ -130,21 +130,40 @@ public class PQ
 		idHeapPos[id]=-1;
 		City removed = heap[idx];
 		
-//		if the index removed is the not rightmost leaf, move the rightmost leaf to the removed position
+		//if the index removed is the not rightmost leaf, move the rightmost leaf to the removed position
 		if(idx!=size)
 		{
 			heap[idx] = heap[size];
 			
-//			update the new position of the moved rightmost leaf, to the helper class.Will be updated if there is a swap.
+			//update the new position of the moved rightmost leaf, to the helper class.Will be updated if there is a swap.
 			idHeapPos[heap[idx].getID()] = idx;
 		}			
 		size--;
-	
-		sink(idx);
+
+		int noOfLeaves = totalLeaves();
+		int firstLeafIdx = size - noOfLeaves + 1;
+		
+		//if the removed index is a leaf swim
+		if(idx>=firstLeafIdx)
+		{
+			swim(idx);
+		}
+		
+		else 
+		{
+			sink(idx);
+		}
+		
 
 		return removed;
 	}
 
+	// from discrete math: leaves = (noOfNodes + 1)/2
+	int totalLeaves()
+	{
+		return (size + 1) / 2;
+	}
+	
 	/**
 	 * Retrieves and removes the max leaf of queue when it is a Min-Type ONLY. Returns null if this queue is
 	 * empty or Max-Type.
@@ -155,8 +174,8 @@ public class PQ
 	{
 		if (isEmpty() || currentType==Type.MAX)
 			return null;
-		// from discrete math: leaves= (noOfNodes + 1)/2
-		int noOfLeaves = (size + 1) / 2;
+		
+		int noOfLeaves = totalLeaves();
 
 		float max = heap[size].getInfectRatio();
 		int index = size;
@@ -330,10 +349,17 @@ public class PQ
 		minPriorityQueue.printHeapTree();
 		minPriorityQueue.isAmismatch();
 
+		
 //      Testing min method
+		
 		System.out.println("Removed MAX element: " + minPriorityQueue.removeMaxLeaf().getInfectRatio());
+		minPriorityQueue.insert(RandomCityGenerator.generateCity());
+		minPriorityQueue.printHeapTree();
+		minPriorityQueue.isAmismatch();
 		System.out.println("Removed MAX element: " + minPriorityQueue.removeMaxLeaf().getInfectRatio());
-		System.out.println("Removed MAX element: " + minPriorityQueue.removeMaxLeaf().getInfectRatio());
+		minPriorityQueue.insert(RandomCityGenerator.generateCity());
+		minPriorityQueue.printHeapTree();
+		minPriorityQueue.isAmismatch();
 		System.out.println("Removed MAX element: " + minPriorityQueue.removeMaxLeaf().getInfectRatio());
 		minPriorityQueue.printHeapTree();
 		minPriorityQueue.isAmismatch();
