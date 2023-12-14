@@ -167,16 +167,6 @@ public class City implements CityInterface, Comparable {
             System.exit(0);
         }
     }
-
-    public void setAll(Node<City> b)
-    {
-        id = b.getData().getID();
-        name = b.getData().getName();
-        population = b.getData().getPopulation();
-        infections = b.getData().getInfluenzaCases();
-        calculateDensity();
-    }
-
 }
 
 

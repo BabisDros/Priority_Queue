@@ -24,12 +24,7 @@ public class Influenza_k
             System.out.println("k must be a positive integer, the program shall exit now...");
             System.exit(0);
         }
-        //* ---------------- Calculations ---------------- *//
-        Node<City> curr = database.getFirst();
-        for(int i = 0; i < database.size(); i++){
-            curr.getData().calculateDensity();
-            curr = curr.getNext();
-        }
+
         //* ---------------- Sorting ---------------- *//
         sorting(database, 0, database.size()-1);
         //* ---------------- Result ---------------- *//
@@ -76,6 +71,7 @@ public class Influenza_k
                 objCity.setName(cityCharacteristics.removeFirst());
                 objCity.setPopulation(Integer.parseInt(cityCharacteristics.removeFirst()));
                 objCity.setInfluenzaCases(Integer.parseInt(cityCharacteristics.removeFirst()));
+                objCity.calculateDensity();
                 database.addLast(objCity); // add city to list
                 line = reader.readLine();
             }
@@ -157,10 +153,9 @@ public class Influenza_k
     
     public static void exch (StringDoubleEndedQueue<City> queue, Node<City> tempStart, Node<City> tempEnd)
     {
-        Node<City>  temp = new Node<City>(new City());
-        temp.getData().setAll(tempStart);
-        tempStart.getData().setAll(tempEnd);
-        tempEnd.getData().setAll(temp);
+        City  tempData = tempStart.data;
+        tempStart.data = tempEnd.data;
+        tempEnd.data = tempData;     
     }
 //! result Vienna Amsterdam Athens Thessaloniki Paris
 
