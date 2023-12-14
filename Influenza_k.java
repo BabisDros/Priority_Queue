@@ -8,16 +8,12 @@ public class Influenza_k
     public static void main (String[] args)
     {
         StringDoubleEndedQueue<City> database = new StringDoubleEndedQueueImpl<City>();
-        Scanner input = new Scanner(System.in);
+
         int k = Integer.parseInt(args[0]);
-        //* ---------------- Read data from file ---------------- *//
-        //?System.out.println("What is the name of the file with the data? (Do not include the extension .txt)");
-        //?String name = input.nextLine();
         String name = args[1];
+        
         readData(database, name);
-        //* ---------------- User interaction ---------------- *//
-        //?System.out.println("How many cities should be included in the ranking?");    It is given from command line
-        //?k = Integer.parseInt(input.nextLine());
+
         if (k>database.size())
         {
             System.out.println("There aren't enough cities to fill the ranks, the program shall exit now...");
@@ -42,7 +38,6 @@ public class Influenza_k
         {
             System.out.println(database.removeFirst().getName());
         }
-        input.close();
     }
 
 
@@ -90,7 +85,7 @@ public class Influenza_k
                 System.exit(0);
             }
             System.out.println("All data were read succesfully");
-            
+            reader.close();
         }
         catch (IOException e) 
         {

@@ -55,6 +55,7 @@ public static void readData(PQ minHeap, PQ maxHeap, String name)
                 line = reader.readLine();
             }
             System.out.println("All data were read succesfully");
+            reader.close();
         }
         catch (IOException e) 
         {
