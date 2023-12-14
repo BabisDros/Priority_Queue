@@ -1,8 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Scanner;
-
 
 public class Dynamic_Median {
 
@@ -10,18 +8,9 @@ public class Dynamic_Median {
     {
         PQ minHeap = new PQ(PQ.Type.MIN);
         PQ maxHeap = new PQ(PQ.Type.MAX);
-        Scanner input = new Scanner(System.in);
-        //* ---------------- Read data from file ---------------- *//
-        //? System.out.println("What is the name of the file with the data? (Do not include the extension .txt)");
-        //? String name = input.nextLine();     Given at command line
         String name = args[0];
         readData(minHeap, maxHeap, name);
-
-        input.close();
     }
-
-
-
 
 public static void readData(PQ minHeap, PQ maxHeap, String name) 
     {
@@ -32,7 +21,6 @@ public static void readData(PQ minHeap, PQ maxHeap, String name)
         StringDoubleEndedQueue<String> cityCharacteristics = new StringDoubleEndedQueueImpl<String>();
         try
         {
-            //?name = name + ".txt";      it is given already
             reader = new BufferedReader(new FileReader(name));
             System.out.println("Reading cities' data from file...");
             line = reader.readLine();
