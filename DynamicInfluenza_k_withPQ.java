@@ -1,22 +1,15 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Scanner;
 
 public class DynamicInfluenza_k_withPQ
 {
 	public static void main(String[] args)
 	{
-		Scanner input = new Scanner(System.in);
-		int k;
-		// * ---------------- Read data from file ---------------- *//
-		System.out.println("What is the name of the file with the data? (Do not include the extension .txt)");
-		String fileName = input.nextLine();
+		int k = Integer.parseInt(args[0]);
+		String fileName = args[1];
 
-		// * ---------------- User interaction ---------------- *//
-		System.out.println("How many cities should be included in the ranking?");
-		k = Integer.parseInt(input.nextLine());
-		PQ safestCities = new PQ(2*k, PQ.Type.MIN);
+		PQ safestCities = new PQ(2 * k, PQ.Type.MIN);
 		readData(safestCities, fileName, k);
 
 		if (k > safestCities.size())
@@ -26,13 +19,11 @@ public class DynamicInfluenza_k_withPQ
 		}
 
 		// * ---------------- Result ---------------- *//
-		System.out.println("The safest "+ k +" cities are:");
+		System.out.println("The safest " + k + " cities are:");
 		for (int i = 0; i < k; i++)
 		{
 			System.out.println(safestCities.getHead().getName());
 		}
-
-		input.close();
 	}
 
 	public static void readData(PQ safestCities, String fileName, int k)
@@ -45,7 +36,7 @@ public class DynamicInfluenza_k_withPQ
 		StringDoubleEndedQueue<String> cityCharacteristics = new StringDoubleEndedQueueImpl<String>();
 		try
 		{
-			fileName = fileName + ".txt";
+			
 			reader = new BufferedReader(new FileReader(fileName));
 			System.out.println("Reading cities' data from file...");
 			line = reader.readLine();
@@ -79,10 +70,10 @@ public class DynamicInfluenza_k_withPQ
 				{
 					safestCities.removeMaxLeaf();
 				}
-				
+
 				line = reader.readLine();
 			}
-			
+
 			System.out.println("All data were read succesfully");
 			reader.close();
 		}
