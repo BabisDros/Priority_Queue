@@ -78,7 +78,8 @@ public class PQ
 	 * this queue is empty.
 	 *
 	 * @return the head of the queue
-	 */
+	 * Used to be public City min()
+	 */ 
 	public City peek()
 	{
 		// Ensure not empty
@@ -94,6 +95,7 @@ public class PQ
 	 * is empty.
 	 *
 	 * @return the head of the queue
+	 * Used to be public City getMin()
 	 */
 	public City getHead()
 	{
