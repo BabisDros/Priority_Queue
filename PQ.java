@@ -1,8 +1,4 @@
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-
 public class PQ
 {
 	private City[] heap; // the heap to store data in
