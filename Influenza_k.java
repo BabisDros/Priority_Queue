@@ -9,17 +9,23 @@ public class Influenza_k
     {
         StringDoubleEndedQueue<City> database = new StringDoubleEndedQueueImpl<City>();
         Scanner input = new Scanner(System.in);
-        int k;
+        int k = Integer.parseInt(args[0]);
         //* ---------------- Read data from file ---------------- *//
-        System.out.println("What is the name of the file with the data? (Do not include the extension .txt)");
-        String name = input.nextLine();
+        //?System.out.println("What is the name of the file with the data? (Do not include the extension .txt)");
+        //?String name = input.nextLine();
+        String name = args[1];
         readData(database, name);
         //* ---------------- User interaction ---------------- *//
-        System.out.println("How many cities should be included in the ranking?");
-        k = Integer.parseInt(input.nextLine());
+        //?System.out.println("How many cities should be included in the ranking?");    It is given from command line
+        //?k = Integer.parseInt(input.nextLine());
         if (k>database.size())
         {
-            System.out.println("There aren't enough cities to fill the ranks, the program shall exit now");
+            System.out.println("There aren't enough cities to fill the ranks, the program shall exit now...");
+            System.exit(0);
+        }
+        else if (k<0)
+        {
+            System.out.println("k must be a positive integer, the program shall exit now...");
             System.exit(0);
         }
         //* ---------------- Calculations ---------------- *//
@@ -49,7 +55,7 @@ public class Influenza_k
         StringDoubleEndedQueue<String> cityCharacteristics = new StringDoubleEndedQueueImpl<String>();
         try
         {
-            name = name + ".txt";
+            //?name = name + ".txt";        It is given from command line
             reader = new BufferedReader(new FileReader(name));
             System.out.println("Reading cities' data from file...");
             line = reader.readLine();
@@ -78,7 +84,13 @@ public class Influenza_k
                 database.addLast(objCity); // add city to list
                 line = reader.readLine();
             }
+            if (database.size() == 0)
+            {
+                System.out.println("The file was empty, the program will exit now...");
+                System.exit(0);
+            }
             System.out.println("All data were read succesfully");
+            
         }
         catch (IOException e) 
         {
@@ -150,26 +162,10 @@ public class Influenza_k
     
     public static void exch (StringDoubleEndedQueue<City> queue, Node<City> tempStart, Node<City> tempEnd)
     {
-        // System.out.println("Before: ");
-        // Node<City>  temp2 = queue.getFirst();
-        // for (int i = 0; i < queue.size(); i++)
-        // {
-        //     System.out.print(temp2.getData().getName() + " num" + temp2.getData().getInfectRatio() + " | ");
-        //     temp2 = temp2.getNext();
-        // }
-
         Node<City>  temp = new Node<City>(new City());
         temp.getData().setAll(tempStart);
         tempStart.getData().setAll(tempEnd);
         tempEnd.getData().setAll(temp);
-
-        // System.out.println("\nAfter: ");
-        // temp2 = queue.getFirst();
-        // for (int i = 0; i < queue.size(); i++)
-        // {
-        //     System.out.print(temp2.getData().getName() + " num" + temp2.getData().getInfectRatio() + " | ");
-        //     temp2 = temp2.getNext();
-        // }
     }
 //! result Vienna Amsterdam Athens Thessaloniki Paris
 
