@@ -1,4 +1,4 @@
-import java.util.*;
+import java.util.NoSuchElementException;
 import java.io.PrintStream;
 
 public class  StringDoubleEndedQueueImpl<T> implements StringDoubleEndedQueue<T> 
